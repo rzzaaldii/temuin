@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="id">
+<head th:replace="~{fragments/layout :: head('Masuk')}"></head>
+<body>
+<div class="phone">
+    <div th:replace="~{fragments/layout :: statusBar}"></div>
+
+    <div class="screen">
+        <form th:action="@{/login}" method="post" class="stack" style="min-height:100%; gap:20px;">
+            <div class="stack gap-4" style="align-items:center;">
+                <img th:src="@{/img/logo.svg}" width="60" height="60" alt="Temuin">
+                <div class="stack gap-4" style="text-align:center;">
+                    <p class="h5">Selamat Datang!</p>
+                    <p class="muted" style="font-size:16px;">Senang melihatmu kembali. Masuk untuk melanjutkan.</p>
+                </div>
+            </div>
+
+            <div class="stack gap-40">
+                <div class="stack gap-8">
+                    <div th:if="${error != null}" class="alert" th:text="${error}">Error</div>
+                    <div class="stack gap-16">
+                        <div class="field">
+                            <label class="field-label" for="email">Email</label>
+                            <div class="input-box lg">
+                                <span class="ico"><img th:src="@{/img/ic-mail.svg}" alt=""></span>
+                                <input type="email" id="email" name="email" th:value="${email}"
+                                       placeholder="Masukkan alamat email anda" required>
+                            </div>
+                        </div>
+                        <div class="field">
+                            <label class="field-label" for="password">Kata Sandi</label>
+                            <div class="input-box lg">
+                                <span class="ico"><img th:src="@{/img/ic-lock.svg}" alt=""></span>
+                                <input type="password" id="password" name="password"
+                                       placeholder="Masukkan kata sandi anda" required>
+                                <button type="button" class="ico" onclick="togglePassword('password')">
+                                    <img th:src="@{/img/ic-eye.svg}" alt="Lihat">
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="link-right">Lupa kata sandi?</p>
+                </div>
+
+                <div class="stack gap-8">
+                    <button type="submit" class="btn btn-primary">Masuk</button>
+                    <div class="divider-text"><span class="line"></span>atau lanjutkan<span class="line"></span></div>
+                    <a th:href="@{/login}" class="btn-google">
+                        <img th:src="@{/img/google.svg}" width="20" height="20" alt="">
+                        Google
+                    </a>
+                </div>
+            </div>
+
+            <div class="auth-footer" style="margin-top:auto; padding-bottom:4px;">
+                <span>Belum memiliki akun?</span>
+                <a th:href="@{/daftar}">Daftar</a>
+            </div>
+        </form>
+    </div>
+
+    <div th:replace="~{fragments/layout :: homeIndicator}"></div>
+</div>
+</body>
+</html>

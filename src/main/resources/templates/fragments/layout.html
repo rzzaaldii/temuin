@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<!-- head: dipakai semua halaman -->
+<head th:fragment="head(judul)">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title th:text="${judul} + ' - Temuin'">Temuin</title>
+    <link rel="icon" type="image/svg+xml" th:href="@{/img/logo.svg}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <script th:src="@{/js/app.js}" defer></script>
+</head>
+
+<body>
+
+<!-- status bar HP -->
+<div th:fragment="statusBar" class="status-bar">
+    <span class="jam">9:41</span>
+    <div class="status-icons">
+        <div class="signal">
+            <span style="height:4px"></span>
+            <span style="height:6px"></span>
+            <span style="height:8px"></span>
+            <span style="height:10px"></span>
+        </div>
+        <div class="wifi"></div>
+        <div class="battery"><span></span></div>
+    </div>
+</div>
+
+<!-- garis home indicator -->
+<div th:fragment="homeIndicator" class="home-indicator"><span></span></div>
+
+<!-- pesan sukses (flash) -->
+<div th:fragment="toast" th:if="${pesan != null}" id="toast" class="toast" th:text="${pesan}">Pesan</div>
+
+<!-- navbar bawah -->
+<nav th:fragment="navbar(aktif)" class="navbar">
+    <a th:href="@{/}" th:class="${aktif == 'beranda'} ? 'nav-item active' : 'nav-item'">
+        <span class="nav-icon">
+            <img th:if="${aktif == 'beranda'}" th:src="@{/img/nav-beranda-on.svg}" alt="">
+            <img th:unless="${aktif == 'beranda'}" th:src="@{/img/nav-beranda-off.svg}" alt="">
+        </span>
+        <span>Beranda</span>
+    </a>
+    <a th:href="@{/laporan}" th:class="${aktif == 'laporan'} ? 'nav-item active' : 'nav-item'">
+        <span class="nav-icon">
+            <img th:if="${aktif == 'laporan'}" th:src="@{/img/nav-laporan-on.svg}" alt="">
+            <img th:unless="${aktif == 'laporan'}" th:src="@{/img/nav-laporan-off.svg}" alt="">
+        </span>
+        <span>Laporan</span>
+    </a>
+    <a th:href="@{/klaim}" th:class="${aktif == 'klaim'} ? 'nav-item active' : 'nav-item'">
+        <span class="nav-icon">
+            <img th:if="${aktif == 'klaim'}" th:src="@{/img/nav-klaim-on.svg}" alt="">
+            <img th:unless="${aktif == 'klaim'}" th:src="@{/img/nav-klaim-off.svg}" alt="">
+        </span>
+        <span>Klaim</span>
+    </a>
+    <a th:href="@{/informasi}" th:class="${aktif == 'informasi'} ? 'nav-item active' : 'nav-item'">
+        <span class="nav-icon">
+            <img th:if="${aktif == 'informasi'}" th:src="@{/img/nav-info-on.svg}" alt="">
+            <img th:unless="${aktif == 'informasi'}" th:src="@{/img/nav-info-off.svg}" alt="">
+        </span>
+        <span>Informasi</span>
+    </a>
+</nav>
+
+<!-- kartu barang kecil (grid) -->
+<a th:fragment="card(b, url)" th:href="${url}" class="card">
+    <div class="card-img">
+        <img class="foto" th:src="${b.fotoUrl}" alt="">
+        <span th:class="${b.badgeClass}" th:text="${b.statusText}">Temuan</span>
+    </div>
+    <div class="stack gap-4">
+        <p class="card-title" th:text="${b.nama}">Nama Barang</p>
+        <div class="meta"><span class="ico16"><img th:src="@{/img/ic-pin16.svg}" alt=""></span><span th:text="${b.lokasi}">Lokasi</span></div>
+        <div class="meta"><span class="ico16"><img th:src="@{/img/ic-cal16.svg}" alt=""></span><span th:text="${b.tanggalText}">Tanggal</span></div>
+        <div class="meta"><span class="ico16"><img th:src="@{/img/ic-clock16.svg}" alt=""></span><span th:text="${b.waktuText}">Waktu</span></div>
+    </div>
+</a>
+
+<!-- kartu barang besar (detail, klaim, verifikasi) -->
+<div th:fragment="bigCard(b)" class="big-card">
+    <div class="foto"><img th:src="${b.fotoUrl}" alt=""></div>
+    <div class="info">
+        <div class="stack gap-4">
+            <p class="card-title" th:text="${b.nama}">Nama</p>
+            <div class="meta"><span class="ico16"><img th:src="@{/img/ic-pin16.svg}" alt=""></span><span th:text="${b.lokasi}">Lokasi</span></div>
+            <div class="meta"><span class="ico16"><img th:src="@{/img/ic-cal16.svg}" alt=""></span><span th:text="${b.tanggalText}">Tanggal</span></div>
+            <div class="meta"><span class="ico16"><img th:src="@{/img/ic-clock16.svg}" alt=""></span><span th:text="${b.waktuText}">Waktu</span></div>
+        </div>
+        <hr>
+        <div class="status-row">Status Barang: <span th:class="${b.badgeClass}" th:text="${b.statusText}">Temuan</span></div>
+    </div>
+</div>
+
+<!-- bottom sheet pilih sumber foto -->
+<div th:fragment="sheet" id="sheet" class="sheet-overlay" onclick="tutupSheet(event)">
+    <div class="sheet">
+        <button type="button" class="sheet-btn" onclick="ambilGambar()">
+            <span class="ico32"><img th:src="@{/img/ic-camera.svg}" alt=""></span>
+            <span>Ambil Gambar</span>
+        </button>
+        <button type="button" class="sheet-btn" onclick="pilihFile()">
+            <span class="ico32"><img th:src="@{/img/ic-file.svg}" alt=""></span>
+            <span>Pilih File</span>
+        </button>
+    </div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="id">
+<head th:replace="~{fragments/layout :: head('Beranda')}"></head>
+<body>
+<div class="phone">
+    <div th:replace="~{fragments/layout :: statusBar}"></div>
+    <div th:replace="~{fragments/layout :: toast}"></div>
+
+    <div class="screen with-nav" style="padding-left:0; padding-right:0;">
+        <div class="stack gap-12" style="align-items:center;">
+            <!-- header -->
+            <div class="page-header" style="gap:28px; width:342px; max-width:100%; align-items:flex-start;">
+                <div class="text">
+                    <p class="h4">Temuin</p>
+                    <p class="sub">Cari dan lihat laporan kehilangan barang di sekitar anda</p>
+                </div>
+                <a th:href="@{/logout}" class="avatar-wrap" title="Keluar">
+                    <img class="avatar" th:src="${user.foto != null ? user.foto : '/img/avatar.png'}" width="40" height="40" alt="Profil">
+                </a>
+            </div>
+
+            <div class="stack gap-12" style="width:100%; padding:0 24px;">
+                <!-- pencarian -->
+                <form th:action="@{/}" method="get" class="search-box">
+                    <input type="hidden" name="tab" th:value="${tab}">
+                    <input type="hidden" name="kategori" th:value="${kategori}">
+                    <div class="left">
+                        <img th:src="@{/img/ic-search.svg}" width="24" height="24" alt="">
+                        <input type="text" name="q" th:value="${q}" placeholder="Cari barang anda">
+                    </div>
+                    <button type="submit" style="width:24px;height:24px;display:flex;align-items:center;justify-content:center;">
+                        <img th:src="@{/img/ic-filter.svg}" alt="Filter">
+                    </button>
+                </form>
+
+                <!-- kategori -->
+                <div class="chips">
+                    <a th:href="@{/(tab=${tab},kategori='Semua',q=${q})}"
+                       th:class="${kategori == 'Semua'} ? 'chip semua active' : 'chip semua'">Semua</a>
+                    <a th:href="@{/(tab=${tab},kategori='Elektronik',q=${q})}"
+                       th:class="${kategori == 'Elektronik'} ? 'chip active' : 'chip'">
+                        <img th:src="@{/img/cat-elektronik.svg}" width="16" height="16" alt="">Elektronik</a>
+                    <a th:href="@{/(tab=${tab},kategori='Pakaian',q=${q})}"
+                       th:class="${kategori == 'Pakaian'} ? 'chip active' : 'chip'">
+                        <img th:src="@{/img/cat-pakaian.svg}" width="16" height="16" alt="">Pakaian</a>
+                    <a th:href="@{/(tab=${tab},kategori='Aksesoris',q=${q})}"
+                       th:class="${kategori == 'Aksesoris'} ? 'chip active' : 'chip'">
+                        <img th:src="@{/img/cat-aksesoris.svg}" width="16" height="16" alt="">Aksesoris</a>
+                    <a th:href="@{/(tab=${tab},kategori='Dokumen',q=${q})}"
+                       th:class="${kategori == 'Dokumen'} ? 'chip active' : 'chip'">
+                        <img th:src="@{/img/cat-aksesoris.svg}" width="16" height="16" alt="">Dokumen</a>
+                </div>
+
+                <!-- tab -->
+                <div class="tabs">
+                    <a th:href="@{/(tab='terbaru',kategori=${kategori},q=${q})}"
+                       th:class="${tab == 'terbaru'} ? 'tab active' : 'tab'">Terbaru</a>
+                    <a th:href="@{/(tab='hilang',kategori=${kategori},q=${q})}"
+                       th:class="${tab == 'hilang'} ? 'tab active' : 'tab'">Barang Hilang</a>
+                    <a th:href="@{/(tab='temuan',kategori=${kategori},q=${q})}"
+                       th:class="${tab == 'temuan'} ? 'tab last active' : 'tab last'">Barang Temuan</a>
+                </div>
+
+                <!-- daftar barang -->
+                <div class="grid">
+                    <th:block th:each="b : ${daftarBarang}">
+                        <a th:replace="~{fragments/layout :: card(${b}, @{/barang/{id}(id=${b.id})})}"></a>
+                    </th:block>
+                </div>
+                <p th:if="${#lists.isEmpty(daftarBarang)}" class="empty">Belum ada barang.</p>
+            </div>
+        </div>
+    </div>
+
+    <nav th:replace="~{fragments/layout :: navbar('beranda')}"></nav>
+    <div th:replace="~{fragments/layout :: homeIndicator}"></div>
+</div>
+</body>
+</html>

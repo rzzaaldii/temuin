@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="id">
+
+<head th:replace="~{fragments/layout :: head('Laporan')}"></head>
+
+<body>
+    <div class="phone">
+        <div th:replace="~{fragments/layout :: statusBar}"></div>
+
+        <div class="screen with-nav">
+            <div class="stack gap-24">
+                <div class="page-header">
+                    <div class="text">
+                        <p class="h4">Laporan</p>
+                        <p class="sub">Bantu sesama dengan melaporkan kehilangan dan temuan barang</p>
+                    </div>
+                    <img th:src="@{/img/hero-search.svg}" width="60" height="60" alt="">
+                </div>
+
+                <div class="stack gap-16">
+                    <div class="menu-card">
+                        <img th:src="@{/img/hero-backpack.svg}" width="60" height="60" alt="">
+                        <div class="body">
+                            <p class="judul">Laporkan Kehilangan Barang</p>
+                            <p class="desc">Bantu sesama dengan melaporkan kehilangan barang</p>
+                            <a th:href="@{/laporan/kehilangan}" class="btn btn-primary">Kirim Laporan</a>
+                        </div>
+                    </div>
+                    <div class="menu-card">
+                        <img th:src="@{/img/hero-docs.svg}" width="60" height="60" alt="">
+                        <div class="body">
+                            <p class="judul">Laporkan Temuan Barang</p>
+                            <p class="desc">Bantu sesama dengan melaporkan temuan barang</p>
+                            <a th:href="@{/laporan/temuan}" class="btn btn-primary">Kirim Laporan</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <nav th:replace="~{fragments/layout :: navbar('laporan')}"></nav>
+        <div th:replace="~{fragments/layout :: homeIndicator}"></div>
+    </div>
+</body>
+
+</html>

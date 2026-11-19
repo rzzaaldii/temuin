@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="id">
+<head th:replace="~{fragments/layout :: head('Klaim Barang')}"></head>
+<body>
+<div class="phone">
+    <div th:replace="~{fragments/layout :: statusBar}"></div>
+    <div th:replace="~{fragments/layout :: toast}"></div>
+
+    <div class="screen with-nav">
+        <div class="stack gap-24">
+            <div class="page-header" style="height:79px;">
+                <div class="text">
+                    <p class="h4">Klaim Barang</p>
+                    <p class="sub" th:text="${user.admin} ? 'Verifikasi klaim barang yang diajukan' : 'Ajukan klaim barang yang anda miliki'">Sub</p>
+                </div>
+                <img th:src="@{/img/hero-clipboard.svg}" width="60" height="60" alt="">
+            </div>
+
+            <div class="stack gap-12">
+                <div class="summary">
+                    <p class="judul">Ringkasan Pelaporan</p>
+                    <hr>
+                    <div class="angka">
+                        <div class="item" style="width:auto;">
+                            <img th:src="@{/img/sum-laporan.svg}" width="32" height="32" alt="">
+                            <b th:text="${jumlahLaporan}">3</b>
+                            <span>Laporan</span>
+                        </div>
+                        <div class="item">
+                            <img th:src="@{/img/sum-temuan.svg}" width="32" height="32" alt="">
+                            <b th:text="${jumlahTemuan}">2</b>
+                            <span>Temuan</span>
+                        </div>
+                        <div class="item">
+                            <img th:src="@{/img/sum-klaim.svg}" width="32" height="32" alt="">
+                            <b th:text="${jumlahKlaim}">1</b>
+                            <span>Klaim</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid">
+                    <th:block th:each="b, st : ${daftarBarang}">
+                        <a th:replace="~{fragments/layout :: card(${b}, ${daftarLink[st.index]})}"></a>
+                    </th:block>
+                </div>
+                <p th:if="${#lists.isEmpty(daftarBarang)}" class="empty">Belum ada barang temuan.</p>
+            </div>
+        </div>
+    </div>
+
+    <nav th:replace="~{fragments/layout :: navbar('klaim')}"></nav>
+    <div th:replace="~{fragments/layout :: homeIndicator}"></div>
+</div>
+</body>
+</html>

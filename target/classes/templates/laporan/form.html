@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="id">
+<body>
+
+<!-- form laporan dipakai oleh laporan kehilangan & laporan temuan -->
+<div th:fragment="form(aksi, judul, subjudul, labelTanggal, phNama, phDeskripsi, labelFoto, catatanFoto, labelWaktu)" class="phone">
+    <div th:replace="~{fragments/layout :: statusBar}"></div>
+
+    <div class="screen">
+        <form th:action="${aksi}" method="post" enctype="multipart/form-data" class="stack gap-24">
+            <div class="back-header" style="gap:32px;">
+                <a th:href="@{/laporan}" class="back-btn"><img th:src="@{/img/back.svg}" width="36" height="36" alt="Kembali"></a>
+                <div class="text">
+                    <p class="h6" th:text="${judul}">Judul</p>
+                    <p th:text="${subjudul}">Sub</p>
+                </div>
+            </div>
+
+            <div class="stack gap-24">
+                <div class="stack gap-12">
+                    <div th:if="${error != null}" class="alert" th:text="${error}">Error</div>
+
+                    <div class="field">
+                        <label class="field-label" for="nama">Nama Barang</label>
+                        <div class="input-box">
+                            <span class="ico"><img th:src="@{/img/ic-bag.svg}" alt=""></span>
+                            <input type="text" id="nama" name="nama" th:placeholder="${phNama}" th:value="${param.nama}" required>
+                        </div>
+                    </div>
+
+                    <!-- tanggal -->
+                    <div class="field">
+                        <span class="field-label" th:text="${labelTanggal}">Tanggal</span>
+                        <input type="hidden" id="tanggal-value" name="tanggal" value="">
+                        <div class="input-box select" onclick="bukaKalender('tanggal')">
+                            <span class="ico"><img th:src="@{/img/ic-cal.svg}" alt=""></span>
+                            <span id="tanggal-label" class="placeholder">Pilih tanggal</span>
+                            <span class="caret"><img th:src="@{/img/caret.svg}" alt=""></span>
+                        </div>
+                        <div id="tanggal-popup" class="calendar">
+                            <div class="cal-head">
+                                <button type="button" onclick="gantiBulan('tanggal', -1)">&lsaquo;</button>
+                                <span id="tanggal-judul">November 2026</span>
+                                <button type="button" onclick="gantiBulan('tanggal', 1)">&rsaquo;</button>
+                            </div>
+                            <div id="tanggal-grid" class="cal-grid"></div>
+                        </div>
+                    </div>
+
+                    <!-- kategori -->
+                    <div class="field">
+                        <span class="field-label">Kategori Barang</span>
+                        <input type="hidden" id="kategori-value" name="kategori" value="">
+                        <div class="input-box select" onclick="toggleDropdown('kategori-popup')">
+                            <span class="ico"><img th:src="@{/img/ic-category.svg}" alt=""></span>
+                            <span id="kategori-label" class="placeholder">Pilih kategori barang</span>
+                            <span class="caret"><img th:src="@{/img/caret.svg}" alt=""></span>
+                        </div>
+                        <div id="kategori-popup" class="dropdown">
+                            <button type="button" class="opt" onclick="pilihOpsi('kategori', 'Elektronik')">Elektronik</button>
+                            <button type="button" class="opt" onclick="pilihOpsi('kategori', 'Pakaian')">Pakaian</button>
+                            <button type="button" class="opt" onclick="pilihOpsi('kategori', 'Aksesoris')">Aksesoris</button>
+                            <button type="button" class="opt" onclick="pilihOpsi('kategori', 'Dokumen')">Dokumen</button>
+                        </div>
+                    </div>
+
+                    <!-- foto -->
+                    <div class="field" style="align-items:center;">
+                        <span class="field-label" style="width:100%;" th:text="${labelFoto}">Tambah Foto</span>
+                        <input type="file" id="foto" name="foto" accept="image/*" class="hidden-file" onchange="tampilkanPreview(this)">
+                        <div class="upload-box" onclick="bukaSheet('foto')"
+                             ondragover="seretMasuk(event, this)" ondragleave="seretKeluar(this)"
+                             ondrop="lepasFile(event, this, 'foto')">
+                            <img id="foto-icon" th:src="@{/img/ic-addphoto.svg}" width="48" height="48" alt="">
+                            <img id="foto-preview" class="preview" alt="">
+                            <p class="t1">Tambah Foto</p>
+                            <p class="t2">atau seret gambar ke sini</p>
+                            <p class="t3" th:if="${catatanFoto}">(Sertakan foto barang, struk pembelian, dll)</p>
+                        </div>
+                    </div>
+
+                    <div class="field">
+                        <label class="field-label" for="deskripsi">Deskripsi Barang</label>
+                        <div class="input-box">
+                            <span class="ico"><img th:src="@{/img/ic-bag.svg}" alt=""></span>
+                            <textarea id="deskripsi" name="deskripsi" th:placeholder="${phDeskripsi}"></textarea>
+                        </div>
+                    </div>
+
+                    <div class="row-2">
+                        <!-- lokasi -->
+                        <div class="field">
+                            <span class="field-label">Lokasi Terakhir</span>
+                            <input type="hidden" id="lokasi-value" name="lokasi" value="">
+                            <div class="input-box select" onclick="toggleDropdown('lokasi-popup')">
+                                <span class="ico"><img th:src="@{/img/ic-pin.svg}" alt=""></span>
+                                <span id="lokasi-label" class="placeholder">Pilih lokasi</span>
+                                <span class="caret"><img th:src="@{/img/caret.svg}" alt=""></span>
+                            </div>
+                            <div id="lokasi-popup" class="dropdown scroll">
+                                <button type="button" class="opt" onclick="pilihOpsi('lokasi', 'Gedung F 2.6')">Gedung F 2.6</button>
+                                <button type="button" class="opt" onclick="pilihOpsi('lokasi', 'GKM FILKOM')">GKM FILKOM</button>
+                                <button type="button" class="opt" onclick="pilihOpsi('lokasi', 'Gedung G 1.4')">Gedung G 1.4</button>
+                                <button type="button" class="opt" onclick="pilihOpsi('lokasi', 'Junction')">Junction</button>
+                                <button type="button" class="opt" onclick="pilihOpsi('lokasi', 'Gedung F RKB')">Gedung F RKB</button>
+                            </div>
+                        </div>
+                        <!-- waktu -->
+                        <div class="field">
+                            <span class="field-label" style="white-space:nowrap;" th:text="${labelWaktu}">Waktu</span>
+                            <input type="hidden" id="waktu-value" name="waktu" value="">
+                            <div class="input-box select" onclick="toggleDropdown('waktu-popup')">
+                                <span class="ico"><img th:src="@{/img/ic-clock.svg}" alt=""></span>
+                                <span id="waktu-label" class="placeholder">Pilih waktu</span>
+                                <span class="caret"><img th:src="@{/img/caret.svg}" alt=""></span>
+                            </div>
+                            <div id="waktu-popup" class="dropdown time-panel">
+                                <div class="time-row">
+                                    <input type="number" id="waktu-jam" min="0" max="23" value="14">
+                                    <span>:</span>
+                                    <input type="number" id="waktu-menit" min="0" max="59" value="20">
+                                </div>
+                                <button type="button" class="btn btn-primary btn-sm" onclick="setWaktu('waktu')">Set Waktu</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary">Kirim Laporan</button>
+            </div>
+        </form>
+    </div>
+
+    <div th:replace="~{fragments/layout :: sheet}"></div>
+    <div th:replace="~{fragments/layout :: homeIndicator}"></div>
+</div>
+
+</body>
+</html>

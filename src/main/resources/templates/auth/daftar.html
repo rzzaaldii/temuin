@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="id">
+<head th:replace="~{fragments/layout :: head('Daftar')}"></head>
+<body>
+<div class="phone">
+    <div th:replace="~{fragments/layout :: statusBar}"></div>
+
+    <div class="screen">
+        <form th:action="@{/daftar}" method="post" class="stack" style="min-height:100%; gap:20px;">
+            <div class="stack gap-4" style="align-items:center;">
+                <img th:src="@{/img/logo.svg}" width="60" height="60" alt="Temuin">
+                <div class="stack gap-4" style="text-align:center;">
+                    <p class="h5">Selamat Datang!</p>
+                    <p class="muted" style="font-size:16px;">Buat akun baru untuk mulai menggunakan aplikasi kami.</p>
+                </div>
+            </div>
+
+            <div class="stack gap-40">
+                <div class="stack gap-16">
+                    <div th:if="${error != null}" class="alert" th:text="${error}">Error</div>
+                    <div class="field">
+                        <label class="field-label" for="nama">Nama Lengkap</label>
+                        <div class="input-box lg">
+                            <span class="ico"><img th:src="@{/img/ic-mail.svg}" alt=""></span>
+                            <input type="text" id="nama" name="nama" th:value="${nama}"
+                                   placeholder="Masukkan nama lengkap" required>
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label class="field-label" for="email">Email</label>
+                        <div class="input-box lg">
+                            <span class="ico"><img th:src="@{/img/ic-mail.svg}" alt=""></span>
+                            <input type="email" id="email" name="email" th:value="${email}"
+                                   placeholder="Masukkan alamat email anda" required>
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label class="field-label" for="password">Kata Sandi</label>
+                        <div class="input-box lg">
+                            <span class="ico"><img th:src="@{/img/ic-lock.svg}" alt=""></span>
+                            <input type="password" id="password" name="password"
+                                   placeholder="Masukkan kata sandi anda" required>
+                            <button type="button" class="ico" onclick="togglePassword('password')">
+                                <img th:src="@{/img/ic-eye.svg}" alt="Lihat">
+                            </button>
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label class="field-label" for="konfirmasi">Konfirmasi Kata Sandi</label>
+                        <div class="input-box lg">
+                            <span class="ico"><img th:src="@{/img/ic-lock.svg}" alt=""></span>
+                            <input type="password" id="konfirmasi" name="konfirmasi"
+                                   placeholder="Masukkan kata sandi anda" required>
+                            <button type="button" class="ico" onclick="togglePassword('konfirmasi')">
+                                <img th:src="@{/img/ic-eye.svg}" alt="Lihat">
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary">Daftar</button>
+            </div>
+
+            <div class="auth-footer" style="margin-top:auto; padding-bottom:4px;">
+                <span>Sudah memiliki akun?</span>
+                <a th:href="@{/login}">Masuk</a>
+            </div>
+        </form>
+    </div>
+
+    <div th:replace="~{fragments/layout :: homeIndicator}"></div>
+</div>
+</body>
+</html>

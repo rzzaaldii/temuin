@@ -1,0 +1,9 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="id">
+<head th:replace="~{fragments/layout :: head('Laporan Kehilangan')}"></head>
+<body>
+<div th:replace="~{laporan/form :: form(@{/laporan/kehilangan}, 'Laporan Kehilangan', 'Laporkan kehilangan barang disini',
+        'Tanggal Laporan', 'Masukkan nama barang anda', 'Deskripsikan barang anda',
+        'Tambah Foto (Optional)', true, 'Waktu Kehilangan')}"></div>
+</body>
+</html>
