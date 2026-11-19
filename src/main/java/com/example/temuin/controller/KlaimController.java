@@ -43,7 +43,8 @@ public class KlaimController {
         User user = sessionHelper.userLogin(session);
         List<Barang> daftar = barangService.barangUntukKlaim();
 
-        // link tiap kartu: user -> form klaim, admin -> verifikasi (jika ada klaim menunggu)
+        // link tiap kartu: user -> form klaim, admin -> verifikasi (jika ada klaim
+        // menunggu)
         List<String> link = new ArrayList<String>();
         for (int i = 0; i < daftar.size(); i++) {
             Barang b = daftar.get(i);
@@ -64,7 +65,7 @@ public class KlaimController {
         model.addAttribute("user", user);
         model.addAttribute("daftarBarang", daftar);
         model.addAttribute("daftarLink", link);
-        model.addAttribute("jumlahLaporan", barangService.jumlahStatus(Barang.HILANG));
+        model.addAttribute("jumlahLaporan", daftar.size());
         model.addAttribute("jumlahTemuan", barangService.jumlahStatus(Barang.TEMUAN));
         model.addAttribute("jumlahKlaim", barangService.jumlahStatus(Barang.KLAIM));
         model.addAttribute("nav", "klaim");
