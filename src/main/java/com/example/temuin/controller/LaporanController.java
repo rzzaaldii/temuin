@@ -61,6 +61,8 @@ public class LaporanController {
         }
         Barang barang = buatBarang(nama, tanggal, kategori, deskripsi, lokasi, waktu, session);
         barang.setStatus(Barang.HILANG);
+        barang.setLokasiSimpan(lokasi);
+        barang.aturPenyimpananAwal();
         String urlFoto = uploadHelper.simpan(foto);
         if (urlFoto != null) {
             barang.setFoto(urlFoto);
