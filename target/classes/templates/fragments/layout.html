@@ -16,23 +16,11 @@
 
 <body>
 
-<!-- status bar HP -->
-<div th:fragment="statusBar" class="status-bar">
-    <span class="jam">9:41</span>
-    <div class="status-icons">
-        <div class="signal">
-            <span style="height:4px"></span>
-            <span style="height:6px"></span>
-            <span style="height:8px"></span>
-            <span style="height:10px"></span>
-        </div>
-        <div class="wifi"></div>
-        <div class="battery"><span></span></div>
-    </div>
-</div>
+<!-- status bar HP (dihapus) -->
+<th:block th:fragment="statusBar"></th:block>
 
-<!-- garis home indicator -->
-<div th:fragment="homeIndicator" class="home-indicator"><span></span></div>
+<!-- garis home indicator (dihapus) -->
+<th:block th:fragment="homeIndicator"></th:block>
 
 <!-- pesan sukses (flash) -->
 <div th:fragment="toast" th:if="${pesan != null}" id="toast" class="toast" th:text="${pesan}">Pesan</div>
