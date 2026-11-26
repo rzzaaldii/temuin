@@ -393,6 +393,10 @@ img {
     border-color: var(--primary);
 }
 
+.input-box.error {
+    border-color: #d32f2f;
+}
+
 .row-2 {
     display: flex;
     gap: 16px;

@@ -41,20 +41,22 @@ public class LaporanController {
         return "laporan/kehilangan";
     }
 
-    @GetMapping("/laporan/temuan")
-    public String formTemuan() {
-        return "laporan/temuan";
-    }
-
     @PostMapping("/laporan/kehilangan")
     public String kirimKehilangan(@RequestParam String nama, @RequestParam(defaultValue = "") String tanggal,
             @RequestParam(defaultValue = "") String kategori, @RequestParam(required = false) MultipartFile foto,
             @RequestParam(defaultValue = "") String deskripsi, @RequestParam(defaultValue = "") String lokasi,
             @RequestParam(defaultValue = "") String waktu, HttpSession session, Model model,
             RedirectAttributes redirect) {
-        String error = cekForm(nama, tanggal, kategori, lokasi, waktu);
-        if (error != null) {
-            model.addAttribute("error", error);
+        String errorField = cekFieldKosong(nama, tanggal, kategori, lokasi, waktu);
+        if (errorField != null) {
+            model.addAttribute("error", pesanError(errorField));
+            model.addAttribute("errorField", errorField);
+            model.addAttribute("nama", nama);
+            model.addAttribute("tanggal", tanggal);
+            model.addAttribute("kategori", kategori);
+            model.addAttribute("deskripsi", deskripsi);
+            model.addAttribute("lokasi", lokasi);
+            model.addAttribute("waktu", waktu);
             return "laporan/kehilangan";
         }
         Barang barang = buatBarang(nama, tanggal, kategori, deskripsi, lokasi, waktu, session);
@@ -68,50 +70,34 @@ public class LaporanController {
         return "redirect:/";
     }
 
-    @PostMapping("/laporan/temuan")
-    public String kirimTemuan(@RequestParam String nama, @RequestParam(defaultValue = "") String tanggal,
-            @RequestParam(defaultValue = "") String kategori, @RequestParam(required = false) MultipartFile foto,
-            @RequestParam(defaultValue = "") String deskripsi, @RequestParam(defaultValue = "") String lokasi,
-            @RequestParam(defaultValue = "") String waktu, HttpSession session, Model model,
-            RedirectAttributes redirect) {
-        String error = cekForm(nama, tanggal, kategori, lokasi, waktu);
-        String urlFoto = null;
-        if (error == null) {
-            urlFoto = uploadHelper.simpan(foto);
-            if (urlFoto == null) {
-                error = "Foto barang temuan wajib diisi (jpg/png).";
-            }
-        }
-        if (error != null) {
-            model.addAttribute("error", error);
-            return "laporan/temuan";
-        }
-        Barang barang = buatBarang(nama, tanggal, kategori, deskripsi, lokasi, waktu, session);
-        barang.setStatus(Barang.TEMUAN);
-        barang.setFoto(urlFoto);
-        barang.aturPenyimpananAwal();
-        barangRepository.save(barang);
-        redirect.addFlashAttribute("pesan", "Laporan temuan berhasil dikirim.");
-        return "redirect:/";
-    }
-
-    private String cekForm(String nama, String tanggal, String kategori, String lokasi, String waktu) {
+    private String cekFieldKosong(String nama, String tanggal, String kategori, String lokasi, String waktu) {
         if (nama.trim().isEmpty()) {
-            return "Nama barang wajib diisi.";
+            return "nama";
         }
         if (tanggal.isEmpty()) {
-            return "Tanggal wajib dipilih.";
+            return "tanggal";
         }
         if (kategori.isEmpty()) {
-            return "Kategori barang wajib dipilih.";
+            return "kategori";
         }
         if (lokasi.isEmpty()) {
-            return "Lokasi wajib dipilih.";
+            return "lokasi";
         }
         if (waktu.isEmpty()) {
-            return "Waktu wajib dipilih.";
+            return "waktu";
         }
         return null;
+    }
+
+    private String pesanError(String field) {
+        return switch (field) {
+            case "nama" -> "Nama barang wajib diisi.";
+            case "tanggal" -> "Tanggal wajib dipilih.";
+            case "kategori" -> "Kategori barang wajib dipilih.";
+            case "lokasi" -> "Lokasi wajib dipilih.";
+            case "waktu" -> "Waktu wajib dipilih.";
+            default -> "Data laporan belum lengkap.";
+        };
     }
 
     private Barang buatBarang(String nama, String tanggal, String kategori, String deskripsi, String lokasi,

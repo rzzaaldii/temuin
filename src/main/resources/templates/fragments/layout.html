@@ -53,27 +53,13 @@
         </span>
         <span>Laporan</span>
     </a>
-    <a th:href="@{/klaim}" th:class="${aktif == 'klaim'} ? 'nav-item active' : 'nav-item'">
-        <span class="nav-icon">
-            <img th:if="${aktif == 'klaim'}" th:src="@{/img/nav-klaim-on.svg}" alt="">
-            <img th:unless="${aktif == 'klaim'}" th:src="@{/img/nav-klaim-off.svg}" alt="">
-        </span>
-        <span>Klaim</span>
-    </a>
-    <a th:href="@{/informasi}" th:class="${aktif == 'informasi'} ? 'nav-item active' : 'nav-item'">
-        <span class="nav-icon">
-            <img th:if="${aktif == 'informasi'}" th:src="@{/img/nav-info-on.svg}" alt="">
-            <img th:unless="${aktif == 'informasi'}" th:src="@{/img/nav-info-off.svg}" alt="">
-        </span>
-        <span>Informasi</span>
-    </a>
 </nav>
 
 <!-- kartu barang kecil (grid) -->
-<a th:fragment="card(b, url)" th:href="${url}" class="card">
+<div th:fragment="card(b)" class="card">
     <div class="card-img">
         <img class="foto" th:src="${b.fotoUrl}" alt="">
-        <span th:class="${b.badgeClass}" th:text="${b.statusText}">Temuan</span>
+        <span th:class="${b.badgeClass}" th:text="${b.statusText}">Hilang</span>
     </div>
     <div class="stack gap-4">
         <p class="card-title" th:text="${b.nama}">Nama Barang</p>
@@ -81,7 +67,7 @@
         <div class="meta"><span class="ico16"><img th:src="@{/img/ic-cal16.svg}" alt=""></span><span th:text="${b.tanggalText}">Tanggal</span></div>
         <div class="meta"><span class="ico16"><img th:src="@{/img/ic-clock16.svg}" alt=""></span><span th:text="${b.waktuText}">Waktu</span></div>
     </div>
-</a>
+</div>
 
 <!-- kartu barang besar (detail, klaim, verifikasi) -->
 <div th:fragment="bigCard(b)" class="big-card">

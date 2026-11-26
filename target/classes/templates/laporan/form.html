@@ -22,19 +22,20 @@
 
                     <div class="field">
                         <label class="field-label" for="nama">Nama Barang</label>
-                        <div class="input-box">
+                        <div class="input-box" th:classappend="${errorField == 'nama'} ? ' error' : ''">
                             <span class="ico"><img th:src="@{/img/ic-bag.svg}" alt=""></span>
-                            <input type="text" id="nama" name="nama" th:placeholder="${phNama}" th:value="${param.nama}" required>
+                            <input type="text" id="nama" name="nama" th:placeholder="${phNama}" th:value="${nama != null ? nama : param.nama}">
                         </div>
                     </div>
 
                     <!-- tanggal -->
                     <div class="field">
                         <span class="field-label" th:text="${labelTanggal}">Tanggal</span>
-                        <input type="hidden" id="tanggal-value" name="tanggal" value="">
-                        <div class="input-box select" onclick="bukaKalender('tanggal')">
+                        <input type="hidden" id="tanggal-value" name="tanggal" th:value="${tanggal != null ? tanggal : ''}">
+                        <div class="input-box select" th:classappend="${errorField == 'tanggal'} ? ' error' : ''" onclick="bukaKalender('tanggal')">
                             <span class="ico"><img th:src="@{/img/ic-cal.svg}" alt=""></span>
-                            <span id="tanggal-label" class="placeholder">Pilih tanggal</span>
+                            <span id="tanggal-label" class="placeholder" th:classappend="${tanggal != null && !tanggal.isEmpty()} ? ' filled' : ''"
+                                  th:text="${tanggal != null && !tanggal.isEmpty()} ? ${tanggal} : 'Pilih tanggal'">Pilih tanggal</span>
                             <span class="caret"><img th:src="@{/img/caret.svg}" alt=""></span>
                         </div>
                         <div id="tanggal-popup" class="calendar">
@@ -50,10 +51,11 @@
                     <!-- kategori -->
                     <div class="field">
                         <span class="field-label">Kategori Barang</span>
-                        <input type="hidden" id="kategori-value" name="kategori" value="">
-                        <div class="input-box select" onclick="toggleDropdown('kategori-popup')">
+                        <input type="hidden" id="kategori-value" name="kategori" th:value="${kategori != null ? kategori : ''}">
+                        <div class="input-box select" th:classappend="${errorField == 'kategori'} ? ' error' : ''" onclick="toggleDropdown('kategori-popup')">
                             <span class="ico"><img th:src="@{/img/ic-category.svg}" alt=""></span>
-                            <span id="kategori-label" class="placeholder">Pilih kategori barang</span>
+                            <span id="kategori-label" class="placeholder" th:classappend="${kategori != null && !kategori.isEmpty()} ? ' filled' : ''"
+                                  th:text="${kategori != null && !kategori.isEmpty()} ? ${kategori} : 'Pilih kategori barang'">Pilih kategori barang</span>
                             <span class="caret"><img th:src="@{/img/caret.svg}" alt=""></span>
                         </div>
                         <div id="kategori-popup" class="dropdown">
@@ -83,7 +85,7 @@
                         <label class="field-label" for="deskripsi">Deskripsi Barang</label>
                         <div class="input-box">
                             <span class="ico"><img th:src="@{/img/ic-bag.svg}" alt=""></span>
-                            <textarea id="deskripsi" name="deskripsi" th:placeholder="${phDeskripsi}"></textarea>
+                            <textarea id="deskripsi" name="deskripsi" th:placeholder="${phDeskripsi}" th:text="${deskripsi}"></textarea>
                         </div>
                     </div>
 
@@ -91,10 +93,11 @@
                         <!-- lokasi -->
                         <div class="field">
                             <span class="field-label">Lokasi Terakhir</span>
-                            <input type="hidden" id="lokasi-value" name="lokasi" value="">
-                            <div class="input-box select" onclick="toggleDropdown('lokasi-popup')">
+                            <input type="hidden" id="lokasi-value" name="lokasi" th:value="${lokasi != null ? lokasi : ''}">
+                            <div class="input-box select" th:classappend="${errorField == 'lokasi'} ? ' error' : ''" onclick="toggleDropdown('lokasi-popup')">
                                 <span class="ico"><img th:src="@{/img/ic-pin.svg}" alt=""></span>
-                                <span id="lokasi-label" class="placeholder">Pilih lokasi</span>
+                                <span id="lokasi-label" class="placeholder" th:classappend="${lokasi != null && !lokasi.isEmpty()} ? ' filled' : ''"
+                                      th:text="${lokasi != null && !lokasi.isEmpty()} ? ${lokasi} : 'Pilih lokasi'">Pilih lokasi</span>
                                 <span class="caret"><img th:src="@{/img/caret.svg}" alt=""></span>
                             </div>
                             <div id="lokasi-popup" class="dropdown scroll">
@@ -108,10 +111,11 @@
                         <!-- waktu -->
                         <div class="field">
                             <span class="field-label" style="white-space:nowrap;" th:text="${labelWaktu}">Waktu</span>
-                            <input type="hidden" id="waktu-value" name="waktu" value="">
-                            <div class="input-box select" onclick="toggleDropdown('waktu-popup')">
+                            <input type="hidden" id="waktu-value" name="waktu" th:value="${waktu != null ? waktu : ''}">
+                            <div class="input-box select" th:classappend="${errorField == 'waktu'} ? ' error' : ''" onclick="toggleDropdown('waktu-popup')">
                                 <span class="ico"><img th:src="@{/img/ic-clock.svg}" alt=""></span>
-                                <span id="waktu-label" class="placeholder">Pilih waktu</span>
+                                <span id="waktu-label" class="placeholder" th:classappend="${waktu != null && !waktu.isEmpty()} ? ' filled' : ''"
+                                      th:text="${waktu != null && !waktu.isEmpty()} ? ${waktu} : 'Pilih waktu'">Pilih waktu</span>
                                 <span class="caret"><img th:src="@{/img/caret.svg}" alt=""></span>
                             </div>
                             <div id="waktu-popup" class="dropdown time-panel">
