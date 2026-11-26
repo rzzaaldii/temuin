@@ -42,6 +42,12 @@ public class DataSeeder implements CommandLineRunner {
         buatBarang("Tas Ransel Hitam", "Aksesoris", LocalDate.of(2026, 11, 4), LocalTime.of(9, 0),
                 "GKM FILKOM", "Tas ransel hitam berisi laptop dan buku catatan.", "/img/item-tas.png",
                 Barang.HILANG, user);
+        buatBarang("Botol Minum", "Aksesoris", LocalDate.of(2026, 11, 3), LocalTime.of(12, 45),
+                "Gedung G 1.4", "Ditemukan botol minum tumbler warna navy di meja kelas.", "/img/item-botol.png",
+                Barang.TEMUAN, user);
+        buatBarang("Dompet Hitam", "Aksesoris", LocalDate.of(2026, 11, 2), LocalTime.of(10, 40),
+                "Junction", "Ditemukan dompet berwana hitam memiliki merk X tergeletak di area Junction pagi ini.",
+                "/img/item-dompet.png", Barang.TEMUAN, user);
     }
 
     private Barang buatBarang(String nama, String kategori, LocalDate tanggal, LocalTime waktu, String lokasi,

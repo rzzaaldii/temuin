@@ -41,22 +41,18 @@ public class LaporanController {
         return "laporan/kehilangan";
     }
 
+    @GetMapping("/laporan/temuan")
+    public String formTemuan() {
+        return "laporan/temuan";
+    }
+
     @PostMapping("/laporan/kehilangan")
     public String kirimKehilangan(@RequestParam String nama, @RequestParam(defaultValue = "") String tanggal,
             @RequestParam(defaultValue = "") String kategori, @RequestParam(required = false) MultipartFile foto,
             @RequestParam(defaultValue = "") String deskripsi, @RequestParam(defaultValue = "") String lokasi,
             @RequestParam(defaultValue = "") String waktu, HttpSession session, Model model,
             RedirectAttributes redirect) {
-        String errorField = cekFieldKosong(nama, tanggal, kategori, lokasi, waktu);
-        if (errorField != null) {
-            model.addAttribute("error", pesanError(errorField));
-            model.addAttribute("errorField", errorField);
-            model.addAttribute("nama", nama);
-            model.addAttribute("tanggal", tanggal);
-            model.addAttribute("kategori", kategori);
-            model.addAttribute("deskripsi", deskripsi);
-            model.addAttribute("lokasi", lokasi);
-            model.addAttribute("waktu", waktu);
+        if (!validasiForm(nama, tanggal, kategori, lokasi, waktu, deskripsi, null, model)) {
             return "laporan/kehilangan";
         }
         Barang barang = buatBarang(nama, tanggal, kategori, deskripsi, lokasi, waktu, session);
@@ -70,6 +66,45 @@ public class LaporanController {
         barangRepository.save(barang);
         redirect.addFlashAttribute("pesan", "Laporan kehilangan berhasil dikirim.");
         return "redirect:/";
+    }
+
+    @PostMapping("/laporan/temuan")
+    public String kirimTemuan(@RequestParam String nama, @RequestParam(defaultValue = "") String tanggal,
+            @RequestParam(defaultValue = "") String kategori, @RequestParam(required = false) MultipartFile foto,
+            @RequestParam(defaultValue = "") String deskripsi, @RequestParam(defaultValue = "") String lokasi,
+            @RequestParam(defaultValue = "") String waktu, HttpSession session, Model model,
+            RedirectAttributes redirect) {
+        String urlFoto = uploadHelper.simpan(foto);
+        String errorFoto = urlFoto == null ? "Foto barang temuan wajib diisi (jpg/png)." : null;
+        if (!validasiForm(nama, tanggal, kategori, lokasi, waktu, deskripsi, errorFoto, model)) {
+            return "laporan/temuan";
+        }
+        Barang barang = buatBarang(nama, tanggal, kategori, deskripsi, lokasi, waktu, session);
+        barang.setStatus(Barang.TEMUAN);
+        barang.setFoto(urlFoto);
+        barang.setLokasiSimpan(lokasi);
+        barang.aturPenyimpananAwal();
+        barangRepository.save(barang);
+        redirect.addFlashAttribute("pesan", "Laporan temuan berhasil dikirim.");
+        return "redirect:/";
+    }
+
+    private boolean validasiForm(String nama, String tanggal, String kategori, String lokasi, String waktu,
+            String deskripsi, String errorFoto, Model model) {
+        String errorField = cekFieldKosong(nama, tanggal, kategori, lokasi, waktu);
+        String error = errorField != null ? pesanError(errorField) : errorFoto;
+        if (error == null) {
+            return true;
+        }
+        model.addAttribute("error", error);
+        model.addAttribute("errorField", errorField);
+        model.addAttribute("nama", nama);
+        model.addAttribute("tanggal", tanggal);
+        model.addAttribute("kategori", kategori);
+        model.addAttribute("deskripsi", deskripsi);
+        model.addAttribute("lokasi", lokasi);
+        model.addAttribute("waktu", waktu);
+        return false;
     }
 
     private String cekFieldKosong(String nama, String tanggal, String kategori, String lokasi, String waktu) {
