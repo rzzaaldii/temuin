@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="id">
+<head th:replace="~{fragments/layout :: head('Halaman Tidak Ditemukan')}"></head>
+<body>
+<div class="phone">
+    <div th:replace="~{fragments/layout :: statusBar}"></div>
+
+    <div class="screen with-nav" style="display:flex; align-items:center; justify-content:center;">
+        <div class="stack gap-24" style="width:100%; align-items:center; text-align:center;">
+            <img th:src="@{/img/hero-search.svg}" width="84" height="84" alt="404">
+
+            <div class="stack gap-8" style="align-items:center;">
+                <span class="badge badge-hilang" style="font-size:12px;">Error 404</span>
+                <p class="h5">Halaman Tidak Ditemukan</p>
+                <p class="muted" style="font-size:14px; max-width:280px;">
+                    Maaf, fitur atau halaman yang Anda tuju belum tersedia atau tidak ditemukan.
+                </p>
+            </div>
+
+            <div class="stack gap-12" style="width:100%;">
+                <a th:href="@{/}" class="btn btn-primary">Kembali ke Beranda</a>
+                <a th:href="@{/laporan/kehilangan}" class="btn btn-outline">Buat Laporan Kehilangan</a>
+            </div>
+        </div>
+    </div>
+
+    <nav th:replace="~{fragments/layout :: navbar('')}"></nav>
+    <div th:replace="~{fragments/layout :: homeIndicator}"></div>
+</div>
+</body>
+</html>
