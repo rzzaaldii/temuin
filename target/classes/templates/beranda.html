@@ -64,7 +64,7 @@
                 <!-- daftar barang -->
                 <div class="grid">
                     <th:block th:each="b : ${daftarBarang}">
-                        <div th:replace="~{fragments/layout :: card(${b})}"></div>
+                        <a th:replace="~{fragments/layout :: card(${b}, @{/barang/{id}(id=${b.id})})}"></a>
                     </th:block>
                 </div>
                 <p th:if="${#lists.isEmpty(daftarBarang)}" class="empty">Belum ada barang.</p>
