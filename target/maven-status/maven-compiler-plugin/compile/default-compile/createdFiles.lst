@@ -4,11 +4,14 @@ com\example\temuin\controller\UploadHelper.class
 com\example\temuin\controller\AuthController.class
 com\example\temuin\config\LoginInterceptor.class
 com\example\temuin\repository\UserRepository.class
+com\example\temuin\repository\KlaimRepository.class
 com\example\temuin\entity\Barang.class
+com\example\temuin\entity\Klaim.class
 com\example\temuin\repository\BarangRepository.class
 com\example\temuin\controller\BerandaController.class
 com\example\temuin\controller\LaporanController.class
 com\example\temuin\config\DataSeeder.class
 com\example\temuin\entity\FormatTanggal.class
 com\example\temuin\entity\User.class
+com\example\temuin\controller\KlaimController.class
 com\example\temuin\controller\SessionHelper.class

@@ -3,12 +3,15 @@ C:\Important Files\Universitas Brawijaya'25\projects\APS\final_project\temuin\sr
 C:\Important Files\Universitas Brawijaya'25\projects\APS\final_project\temuin\src\main\java\com\example\temuin\config\WebConfig.java
 C:\Important Files\Universitas Brawijaya'25\projects\APS\final_project\temuin\src\main\java\com\example\temuin\controller\AuthController.java
 C:\Important Files\Universitas Brawijaya'25\projects\APS\final_project\temuin\src\main\java\com\example\temuin\controller\BerandaController.java
+C:\Important Files\Universitas Brawijaya'25\projects\APS\final_project\temuin\src\main\java\com\example\temuin\controller\KlaimController.java
 C:\Important Files\Universitas Brawijaya'25\projects\APS\final_project\temuin\src\main\java\com\example\temuin\controller\LaporanController.java
 C:\Important Files\Universitas Brawijaya'25\projects\APS\final_project\temuin\src\main\java\com\example\temuin\controller\SessionHelper.java
 C:\Important Files\Universitas Brawijaya'25\projects\APS\final_project\temuin\src\main\java\com\example\temuin\controller\UploadHelper.java
 C:\Important Files\Universitas Brawijaya'25\projects\APS\final_project\temuin\src\main\java\com\example\temuin\entity\Barang.java
 C:\Important Files\Universitas Brawijaya'25\projects\APS\final_project\temuin\src\main\java\com\example\temuin\entity\FormatTanggal.java
+C:\Important Files\Universitas Brawijaya'25\projects\APS\final_project\temuin\src\main\java\com\example\temuin\entity\Klaim.java
 C:\Important Files\Universitas Brawijaya'25\projects\APS\final_project\temuin\src\main\java\com\example\temuin\entity\User.java
 C:\Important Files\Universitas Brawijaya'25\projects\APS\final_project\temuin\src\main\java\com\example\temuin\repository\BarangRepository.java
+C:\Important Files\Universitas Brawijaya'25\projects\APS\final_project\temuin\src\main\java\com\example\temuin\repository\KlaimRepository.java
 C:\Important Files\Universitas Brawijaya'25\projects\APS\final_project\temuin\src\main\java\com\example\temuin\repository\UserRepository.java
 C:\Important Files\Universitas Brawijaya'25\projects\APS\final_project\temuin\src\main\java\com\example\temuin\TemuinApplication.java
