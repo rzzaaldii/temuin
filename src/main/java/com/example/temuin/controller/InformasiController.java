@@ -1,6 +1,7 @@
 package com.example.temuin.controller;
 
 import java.time.LocalDate;
+import java.util.List;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -12,26 +13,34 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.example.temuin.entity.Barang;
 import com.example.temuin.entity.User;
-import com.example.temuin.service.BarangService;
+import com.example.temuin.repository.BarangRepository;
 
 import jakarta.servlet.http.HttpSession;
 
 @Controller
 public class InformasiController {
 
-    private BarangService barangService;
+    private BarangRepository barangRepository;
     private SessionHelper sessionHelper;
 
-    public InformasiController(BarangService barangService, SessionHelper sessionHelper) {
-        this.barangService = barangService;
+    public InformasiController(BarangRepository barangRepository, SessionHelper sessionHelper) {
+        this.barangRepository = barangRepository;
         this.sessionHelper = sessionHelper;
     }
 
     @GetMapping("/informasi")
     public String menuInformasi(@RequestParam(defaultValue = "terbaru") String tab, HttpSession session,
             Model model) {
+        List<Barang> daftar;
+        if ("hilang".equals(tab)) {
+            daftar = barangRepository.findByStatusOrderByTanggalDescIdDesc(Barang.HILANG);
+        } else if ("temuan".equals(tab)) {
+            daftar = barangRepository.findByStatusOrderByTanggalDescIdDesc(Barang.TEMUAN);
+        } else {
+            daftar = barangRepository.findAllByOrderByTanggalDescIdDesc();
+        }
         model.addAttribute("user", sessionHelper.userLogin(session));
-        model.addAttribute("daftarBarang", barangService.filter(tab, "Semua", ""));
+        model.addAttribute("daftarBarang", daftar);
         model.addAttribute("tab", tab);
         model.addAttribute("nav", "informasi");
         return "informasi/menu";
@@ -39,7 +48,7 @@ public class InformasiController {
 
     @GetMapping("/barang/{id}")
     public String detail(@PathVariable Long id, HttpSession session, Model model) {
-        Barang barang = barangService.cariById(id);
+        Barang barang = barangRepository.findById(id).orElse(null);
         if (barang == null) {
             return "redirect:/informasi";
         }
@@ -57,7 +66,7 @@ public class InformasiController {
             @RequestParam String tanggalMulai, @RequestParam String tanggalAkhir, HttpSession session,
             RedirectAttributes redirect) {
         User user = sessionHelper.userLogin(session);
-        Barang barang = barangService.cariById(id);
+        Barang barang = barangRepository.findById(id).orElse(null);
         if (barang == null || !user.isAdmin()) {
             return "redirect:/informasi";
         }
@@ -68,7 +77,7 @@ public class InformasiController {
         if (!tanggalAkhir.isEmpty()) {
             barang.setTanggalAkhir(LocalDate.parse(tanggalAkhir));
         }
-        barangService.simpan(barang);
+        barangRepository.save(barang);
         redirect.addFlashAttribute("pesan", "Informasi barang berhasil diperbarui.");
         return "redirect:/barang/" + id;
     }

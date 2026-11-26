@@ -3,7 +3,7 @@ package com.example.temuin.controller;
 import org.springframework.stereotype.Component;
 
 import com.example.temuin.entity.User;
-import com.example.temuin.service.UserService;
+import com.example.temuin.repository.UserRepository;
 
 import jakarta.servlet.http.HttpSession;
 
@@ -13,10 +13,10 @@ import jakarta.servlet.http.HttpSession;
 @Component
 public class SessionHelper {
 
-    private UserService userService;
+    private UserRepository userRepository;
 
-    public SessionHelper(UserService userService) {
-        this.userService = userService;
+    public SessionHelper(UserRepository userRepository) {
+        this.userRepository = userRepository;
     }
 
     public User userLogin(HttpSession session) {
@@ -24,6 +24,6 @@ public class SessionHelper {
         if (id == null) {
             return null;
         }
-        return userService.cariById((Long) id);
+        return userRepository.findById((Long) id).orElse(null);
     }
 }

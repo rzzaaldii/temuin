@@ -1,15 +1,15 @@
-package com.example.temuin.service;
+package com.example.temuin.controller;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
-@Service
-public class FileService {
+@Component
+public class UploadHelper {
 
     @Value("${app.upload-dir}")
     private String uploadDir;

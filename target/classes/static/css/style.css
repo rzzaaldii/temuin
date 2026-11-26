@@ -46,32 +46,15 @@ img {
     display: block;
 }
 
-/* ---------- Bingkai HP 390 x 844 ---------- */
+/* ---------- Bingkai halaman (desktop default, HP <=430px) ---------- */
 .phone {
     position: relative;
-    width: 390px;
-    height: 844px;
+    width: 100%;
+    height: 100vh;
+    height: 100dvh;
     margin: 0 auto;
     background: var(--n10);
     overflow: hidden;
-}
-
-@media (min-width: 431px) {
-    body {
-        padding: 24px 0;
-    }
-    .phone {
-        border-radius: 24px;
-        box-shadow: 0 4px 24px rgba(0, 0, 0, 0.12);
-    }
-}
-
-@media (max-width: 430px) {
-    .phone {
-        width: 100%;
-        height: 100vh;
-        height: 100dvh;
-    }
 }
 
 .status-bar {
@@ -1238,4 +1221,42 @@ img {
     text-align: center;
     display: block;
     margin-top: 4px;
+}
+
+/* Default = desktop: layout sama persis, lebar penuh */
+.page-header .text,
+.back-header .text,
+.big-card .info {
+    width: auto;
+    flex: 1;
+}
+
+.search-box {
+    width: 100%;
+}
+
+.row-2 .field {
+    width: auto;
+}
+
+/* Mobile: bingkai HP 390px seperti semula */
+@media (max-width: 430px) {
+    .page-header .text {
+        width: 253px;
+        flex: none;
+    }
+    .back-header .text {
+        width: 226px;
+        flex: none;
+    }
+    .big-card .info {
+        width: 147px;
+        flex: none;
+    }
+    .search-box {
+        width: 342px;
+    }
+    .row-2 .field {
+        width: 163px;
+    }
 }

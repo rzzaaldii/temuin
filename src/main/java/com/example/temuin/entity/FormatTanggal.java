@@ -1,4 +1,4 @@
-package com.example.temuin.service;
+package com.example.temuin.entity;
 
 import java.time.LocalDate;
 import java.time.LocalTime;

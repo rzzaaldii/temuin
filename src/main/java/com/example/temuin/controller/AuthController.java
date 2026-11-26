@@ -1,5 +1,9 @@
 package com.example.temuin.controller;
 
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -7,17 +11,17 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.example.temuin.entity.User;
-import com.example.temuin.service.UserService;
+import com.example.temuin.repository.UserRepository;
 
 import jakarta.servlet.http.HttpSession;
 
 @Controller
 public class AuthController {
 
-    private UserService userService;
+    private UserRepository userRepository;
 
-    public AuthController(UserService userService) {
-        this.userService = userService;
+    public AuthController(UserRepository userRepository) {
+        this.userRepository = userRepository;
     }
 
     @GetMapping("/login")
@@ -31,8 +35,8 @@ public class AuthController {
     @PostMapping("/login")
     public String prosesLogin(@RequestParam String email, @RequestParam String password,
             HttpSession session, Model model) {
-        User user = userService.login(email.trim(), password);
-        if (user == null) {
+        User user = userRepository.findByEmail(email.trim());
+        if (user == null || !user.getPassword().equals(hash(password))) {
             model.addAttribute("error", "Email atau kata sandi salah.");
             model.addAttribute("email", email);
             return "auth/login";
@@ -65,12 +69,13 @@ public class AuthController {
             model.addAttribute("error", "Konfirmasi kata sandi tidak sama.");
             return "auth/daftar";
         }
-        if (userService.emailSudahAda(email.trim())) {
+        if (userRepository.findByEmail(email.trim()) != null) {
             model.addAttribute("error", "Email sudah terdaftar.");
             return "auth/daftar";
         }
 
-        User user = userService.daftar(nama.trim(), email.trim(), password);
+        User user = new User(nama.trim(), email.trim(), hash(password), User.ROLE_USER);
+        user = userRepository.save(user);
         session.setAttribute("userId", user.getId());
         return "redirect:/";
     }
@@ -79,5 +84,24 @@ public class AuthController {
     public String logout(HttpSession session) {
         session.invalidate();
         return "redirect:/login";
+    }
+
+    /** hash password dengan SHA-256 supaya tidak tersimpan polos di database */
+    public static String hash(String text) {
+        try {
+            MessageDigest md = MessageDigest.getInstance("SHA-256");
+            byte[] hasil = md.digest(text.getBytes(StandardCharsets.UTF_8));
+            StringBuilder sb = new StringBuilder();
+            for (int i = 0; i < hasil.length; i++) {
+                String hex = Integer.toHexString(0xff & hasil[i]);
+                if (hex.length() == 1) {
+                    sb.append('0');
+                }
+                sb.append(hex);
+            }
+            return sb.toString();
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

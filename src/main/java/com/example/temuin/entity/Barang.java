@@ -3,8 +3,6 @@ package com.example.temuin.entity;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
-import com.example.temuin.service.FormatTanggal;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -219,5 +217,18 @@ public class Barang {
 
     public void setPelapor(User pelapor) {
         this.pelapor = pelapor;
+    }
+
+    /** dipanggil saat barang temuan baru dilaporkan: default disimpan 30 hari */
+    public void aturPenyimpananAwal() {
+        LocalDate mulai = tanggal;
+        if (mulai == null) {
+            mulai = LocalDate.now();
+        }
+        tanggalMulai = mulai;
+        tanggalAkhir = mulai.plusDays(30);
+        if (lokasiSimpan == null) {
+            lokasiSimpan = "Satpam Gedung F Lantai 1";
+        }
     }
 }

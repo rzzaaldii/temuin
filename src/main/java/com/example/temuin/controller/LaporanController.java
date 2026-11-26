@@ -12,21 +12,20 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.example.temuin.entity.Barang;
-import com.example.temuin.service.BarangService;
-import com.example.temuin.service.FileService;
+import com.example.temuin.repository.BarangRepository;
 
 import jakarta.servlet.http.HttpSession;
 
 @Controller
 public class LaporanController {
 
-    private BarangService barangService;
-    private FileService fileService;
+    private BarangRepository barangRepository;
+    private UploadHelper uploadHelper;
     private SessionHelper sessionHelper;
 
-    public LaporanController(BarangService barangService, FileService fileService, SessionHelper sessionHelper) {
-        this.barangService = barangService;
-        this.fileService = fileService;
+    public LaporanController(BarangRepository barangRepository, UploadHelper uploadHelper, SessionHelper sessionHelper) {
+        this.barangRepository = barangRepository;
+        this.uploadHelper = uploadHelper;
         this.sessionHelper = sessionHelper;
     }
 
@@ -60,11 +59,11 @@ public class LaporanController {
         }
         Barang barang = buatBarang(nama, tanggal, kategori, deskripsi, lokasi, waktu, session);
         barang.setStatus(Barang.HILANG);
-        String urlFoto = fileService.simpan(foto);
+        String urlFoto = uploadHelper.simpan(foto);
         if (urlFoto != null) {
             barang.setFoto(urlFoto);
         }
-        barangService.simpan(barang);
+        barangRepository.save(barang);
         redirect.addFlashAttribute("pesan", "Laporan kehilangan berhasil dikirim.");
         return "redirect:/";
     }
@@ -78,7 +77,7 @@ public class LaporanController {
         String error = cekForm(nama, tanggal, kategori, lokasi, waktu);
         String urlFoto = null;
         if (error == null) {
-            urlFoto = fileService.simpan(foto);
+            urlFoto = uploadHelper.simpan(foto);
             if (urlFoto == null) {
                 error = "Foto barang temuan wajib diisi (jpg/png).";
             }
@@ -90,8 +89,8 @@ public class LaporanController {
         Barang barang = buatBarang(nama, tanggal, kategori, deskripsi, lokasi, waktu, session);
         barang.setStatus(Barang.TEMUAN);
         barang.setFoto(urlFoto);
-        barangService.aturPenyimpananAwal(barang);
-        barangService.simpan(barang);
+        barang.aturPenyimpananAwal();
+        barangRepository.save(barang);
         redirect.addFlashAttribute("pesan", "Laporan temuan berhasil dikirim.");
         return "redirect:/";
     }

@@ -6,12 +6,13 @@ import java.time.LocalTime;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
+import com.example.temuin.controller.AuthController;
 import com.example.temuin.entity.Barang;
 import com.example.temuin.entity.Klaim;
 import com.example.temuin.entity.User;
-import com.example.temuin.service.BarangService;
-import com.example.temuin.service.KlaimService;
-import com.example.temuin.service.UserService;
+import com.example.temuin.repository.BarangRepository;
+import com.example.temuin.repository.KlaimRepository;
+import com.example.temuin.repository.UserRepository;
 
 /**
  * Isi data awal (akun & barang contoh) saat database masih kosong.
@@ -19,40 +20,41 @@ import com.example.temuin.service.UserService;
 @Component
 public class DataSeeder implements CommandLineRunner {
 
-    private UserService userService;
-    private BarangService barangService;
-    private KlaimService klaimService;
+    private UserRepository userRepository;
+    private BarangRepository barangRepository;
+    private KlaimRepository klaimRepository;
 
-    public DataSeeder(UserService userService, BarangService barangService, KlaimService klaimService) {
-        this.userService = userService;
-        this.barangService = barangService;
-        this.klaimService = klaimService;
+    public DataSeeder(UserRepository userRepository, BarangRepository barangRepository,
+            KlaimRepository klaimRepository) {
+        this.userRepository = userRepository;
+        this.barangRepository = barangRepository;
+        this.klaimRepository = klaimRepository;
     }
 
     @Override
     public void run(String... args) {
-        if (userService.jumlahUser() > 0) {
+        if (userRepository.count() > 0) {
             return;
         }
 
-        User user = new User("Kelompok 1", "kelompok1@gmail.com", userService.hash("password"), User.ROLE_USER);
+        User user = new User("Kelompok 1", "kelompok1@gmail.com", AuthController.hash("password"), User.ROLE_USER);
         user.setFoto("/img/avatar.png");
-        user = userService.simpan(user);
+        user = userRepository.save(user);
 
-        User admin = new User("Admin", "admin@temuin.com", userService.hash("admin123"), User.ROLE_ADMIN);
+        User admin = new User("Admin", "admin@temuin.com", AuthController.hash("admin123"), User.ROLE_ADMIN);
         admin.setFoto("/img/avatar.png");
-        userService.simpan(admin);
+        userRepository.save(admin);
 
-        User adminUtama = new User("Admin Utama", "adminutama@temuin.com", userService.hash("admin123"),
+        User adminUtama = new User("Admin Utama", "adminutama@temuin.com", AuthController.hash("admin123"),
                 User.ROLE_ADMIN_UTAMA);
         adminUtama.setFoto("/img/avatar.png");
-        userService.simpan(adminUtama);
+        userRepository.save(adminUtama);
 
-        User rizky = new User("Rizky Pratama", "rizky.pratama@gmail.com", userService.hash("password"),
+        User rizky = new User("Rizky Pratama", "rizky.pratama@gmail.com", AuthController.hash("password"),
                 User.ROLE_USER);
         rizky.setTelepon("0812 3456 7890");
         rizky.setFoto("/img/avatar-claimer.png");
-        rizky = userService.simpan(rizky);
+        rizky = userRepository.save(rizky);
 
         buatBarang("AirPods Pro", "Elektronik", LocalDate.of(2026, 11, 4), LocalTime.of(14, 20),
                 "Gedung F 2.6", "AirPods Pro tertinggal di meja ruang kelas.", "/img/item-airpods.png",
@@ -70,7 +72,7 @@ public class DataSeeder implements CommandLineRunner {
                 "Gedung F RKB", "Ditemukan Handphone merk Iphone 15 tertinggal di meja RKB.",
                 "/img/item-iphone.png", Barang.KLAIM, user);
         iphone.setTanggalKlaim(LocalDate.of(2026, 11, 2));
-        barangService.simpan(iphone);
+        barangRepository.save(iphone);
 
         Klaim klaim = new Klaim();
         klaim.setBarang(dompet);
@@ -82,7 +84,7 @@ public class DataSeeder implements CommandLineRunner {
         klaim.setBukti("/img/item-dompet.png");
         klaim.setStatus(Klaim.MENUNGGU);
         klaim.setTanggalPengajuan(LocalDate.of(2026, 11, 3));
-        klaimService.simpan(klaim);
+        klaimRepository.save(klaim);
     }
 
     private Barang buatBarang(String nama, String kategori, LocalDate tanggal, LocalTime waktu, String lokasi,
@@ -97,7 +99,7 @@ public class DataSeeder implements CommandLineRunner {
         b.setFoto(foto);
         b.setStatus(status);
         b.setPelapor(pelapor);
-        barangService.aturPenyimpananAwal(b);
-        return barangService.simpan(b);
+        b.aturPenyimpananAwal();
+        return barangRepository.save(b);
     }
 }

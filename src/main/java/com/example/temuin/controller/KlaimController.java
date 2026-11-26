@@ -16,32 +16,40 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.example.temuin.entity.Barang;
 import com.example.temuin.entity.Klaim;
 import com.example.temuin.entity.User;
-import com.example.temuin.service.BarangService;
-import com.example.temuin.service.FileService;
-import com.example.temuin.service.KlaimService;
+import com.example.temuin.repository.BarangRepository;
+import com.example.temuin.repository.KlaimRepository;
 
 import jakarta.servlet.http.HttpSession;
 
 @Controller
 public class KlaimController {
 
-    private BarangService barangService;
-    private KlaimService klaimService;
-    private FileService fileService;
+    private BarangRepository barangRepository;
+    private KlaimRepository klaimRepository;
+    private UploadHelper uploadHelper;
     private SessionHelper sessionHelper;
 
-    public KlaimController(BarangService barangService, KlaimService klaimService, FileService fileService,
-            SessionHelper sessionHelper) {
-        this.barangService = barangService;
-        this.klaimService = klaimService;
-        this.fileService = fileService;
+    public KlaimController(BarangRepository barangRepository, KlaimRepository klaimRepository,
+            UploadHelper uploadHelper, SessionHelper sessionHelper) {
+        this.barangRepository = barangRepository;
+        this.klaimRepository = klaimRepository;
+        this.uploadHelper = uploadHelper;
         this.sessionHelper = sessionHelper;
     }
 
     @GetMapping("/klaim")
     public String menuKlaim(HttpSession session, Model model) {
         User user = sessionHelper.userLogin(session);
-        List<Barang> daftar = barangService.barangUntukKlaim();
+
+        // barang yang tampil di menu klaim: barang temuan & barang yang sudah diklaim
+        List<Barang> semua = barangRepository.findAllByOrderByTanggalDescIdDesc();
+        List<Barang> daftar = new ArrayList<Barang>();
+        for (int i = 0; i < semua.size(); i++) {
+            Barang b = semua.get(i);
+            if (!Barang.HILANG.equals(b.getStatus())) {
+                daftar.add(b);
+            }
+        }
 
         // link tiap kartu: user -> form klaim, admin -> verifikasi (jika ada klaim
         // menunggu)
@@ -51,9 +59,9 @@ public class KlaimController {
             String url = "/barang/" + b.getId();
             if (Barang.TEMUAN.equals(b.getStatus())) {
                 if (user.isAdmin()) {
-                    Klaim k = klaimService.klaimMenunggu(b);
-                    if (k != null) {
-                        url = "/klaim/verifikasi/" + k.getId();
+                    List<Klaim> menunggu = klaimRepository.findByBarangAndStatusOrderByIdDesc(b, Klaim.MENUNGGU);
+                    if (!menunggu.isEmpty()) {
+                        url = "/klaim/verifikasi/" + menunggu.get(0).getId();
                     }
                 } else {
                     url = "/klaim/ajukan/" + b.getId();
@@ -66,15 +74,15 @@ public class KlaimController {
         model.addAttribute("daftarBarang", daftar);
         model.addAttribute("daftarLink", link);
         model.addAttribute("jumlahLaporan", daftar.size());
-        model.addAttribute("jumlahTemuan", barangService.jumlahStatus(Barang.TEMUAN));
-        model.addAttribute("jumlahKlaim", barangService.jumlahStatus(Barang.KLAIM));
+        model.addAttribute("jumlahTemuan", barangRepository.countByStatus(Barang.TEMUAN));
+        model.addAttribute("jumlahKlaim", barangRepository.countByStatus(Barang.KLAIM));
         model.addAttribute("nav", "klaim");
         return "klaim/menu";
     }
 
     @GetMapping("/klaim/ajukan/{id}")
     public String formKlaim(@PathVariable Long id, HttpSession session, Model model) {
-        Barang barang = barangService.cariById(id);
+        Barang barang = barangRepository.findById(id).orElse(null);
         if (barang == null || !Barang.TEMUAN.equals(barang.getStatus())) {
             return "redirect:/klaim";
         }
@@ -88,11 +96,11 @@ public class KlaimController {
             @RequestParam String telepon, @RequestParam(defaultValue = "") String detail,
             @RequestParam(required = false) MultipartFile bukti, HttpSession session, Model model,
             RedirectAttributes redirect) {
-        Barang barang = barangService.cariById(id);
+        Barang barang = barangRepository.findById(id).orElse(null);
         if (barang == null || !Barang.TEMUAN.equals(barang.getStatus())) {
             return "redirect:/klaim";
         }
-        String urlBukti = fileService.simpan(bukti);
+        String urlBukti = uploadHelper.simpan(bukti);
         String error = null;
         if (nama.trim().isEmpty() || email.trim().isEmpty() || telepon.trim().isEmpty()) {
             error = "Nama, email, dan nomor telepon wajib diisi.";
@@ -116,7 +124,7 @@ public class KlaimController {
         klaim.setBukti(urlBukti);
         klaim.setStatus(Klaim.MENUNGGU);
         klaim.setTanggalPengajuan(LocalDate.now());
-        klaimService.simpan(klaim);
+        klaimRepository.save(klaim);
 
         redirect.addFlashAttribute("pesan", "Klaim berhasil dikirim, menunggu verifikasi admin.");
         return "redirect:/klaim";
@@ -125,7 +133,7 @@ public class KlaimController {
     @GetMapping("/klaim/verifikasi/{id}")
     public String halamanVerifikasi(@PathVariable Long id, HttpSession session, Model model) {
         User user = sessionHelper.userLogin(session);
-        Klaim klaim = klaimService.cariById(id);
+        Klaim klaim = klaimRepository.findById(id).orElse(null);
         if (!user.isAdmin() || klaim == null) {
             return "redirect:/klaim";
         }
@@ -137,9 +145,23 @@ public class KlaimController {
     @PostMapping("/klaim/verifikasi/{id}/terima")
     public String terima(@PathVariable Long id, HttpSession session, RedirectAttributes redirect) {
         User user = sessionHelper.userLogin(session);
-        Klaim klaim = klaimService.cariById(id);
+        Klaim klaim = klaimRepository.findById(id).orElse(null);
         if (user.isAdmin() && klaim != null && Klaim.MENUNGGU.equals(klaim.getStatus())) {
-            klaimService.terima(klaim);
+            klaim.setStatus(Klaim.DITERIMA);
+            klaimRepository.save(klaim);
+
+            Barang barang = klaim.getBarang();
+            barang.setStatus(Barang.KLAIM);
+            barang.setTanggalKlaim(LocalDate.now());
+            barangRepository.save(barang);
+
+            // klaim lain untuk barang yang sama otomatis ditolak
+            List<Klaim> lainnya = klaimRepository.findByBarangAndStatus(barang, Klaim.MENUNGGU);
+            for (int i = 0; i < lainnya.size(); i++) {
+                Klaim k = lainnya.get(i);
+                k.setStatus(Klaim.DITOLAK);
+                klaimRepository.save(k);
+            }
             redirect.addFlashAttribute("pesan", "Klaim berhasil diverifikasi.");
         }
         return "redirect:/klaim";
@@ -148,9 +170,10 @@ public class KlaimController {
     @PostMapping("/klaim/verifikasi/{id}/tolak")
     public String tolak(@PathVariable Long id, HttpSession session, RedirectAttributes redirect) {
         User user = sessionHelper.userLogin(session);
-        Klaim klaim = klaimService.cariById(id);
+        Klaim klaim = klaimRepository.findById(id).orElse(null);
         if (user.isAdmin() && klaim != null && Klaim.MENUNGGU.equals(klaim.getStatus())) {
-            klaimService.tolak(klaim);
+            klaim.setStatus(Klaim.DITOLAK);
+            klaimRepository.save(klaim);
             redirect.addFlashAttribute("pesan", "Klaim ditolak.");
         }
         return "redirect:/klaim";

@@ -26,6 +26,9 @@ Method `isAdmin()` bernilai `true` untuk ADMIN dan ADMIN_UTAMA.
 
 Getter bantu untuk tampilan: `getTanggalText()` ("4 November 2026"), `getWaktuText()` ("09.00"),
 `getStatusText()`, `getBadgeClass()`, `getFotoUrl()`.
+Method `aturPenyimpananAwal()` mengisi lokasi simpan default + durasi simpan 30 hari untuk barang temuan baru.
+
+`FormatTanggal` adalah helper static: `tanggal(LocalDate)` → "4 November 2026", `waktu(LocalTime)` → "09.00".
 
 ## Klaim → tabel `klaim`
 | Kolom | Keterangan |

@@ -1,6 +1,7 @@
 # controller
 
-Menerima request dari browser, memanggil service, lalu mengembalikan nama template Thymeleaf.
+Menerima request dari browser, langsung memanggil repository (database), lalu mengembalikan nama template Thymeleaf.
+Alur: **Frontend (Thymeleaf) → Controller → Repository → Database MySQL**. Tidak ada layer service.
 Semua controller memakai *constructor injection* (tanpa `@Autowired` di field).
 
 | File | URL | Keterangan |
@@ -11,6 +12,9 @@ Semua controller memakai *constructor injection* (tanpa `@Autowired` di field).
 | `KlaimController` | `GET /klaim`, `GET/POST /klaim/ajukan/{barangId}`, `GET /klaim/verifikasi/{klaimId}`, `POST .../terima`, `POST .../tolak` | User mengajukan klaim; admin memverifikasi. |
 | `InformasiController` | `GET /informasi`, `GET /barang/{id}`, `POST /barang/{id}/perbarui` | Daftar & detail barang. Admin melihat halaman kelola (bisa ubah lokasi & durasi simpan). |
 | `SessionHelper` | - | Helper untuk mengambil `User` yang sedang login dari session. |
+| `UploadHelper` | - | Menyimpan foto upload ke folder `uploads/` dengan nama acak (UUID). Hanya menerima jpg, jpeg, png, webp, gif. Mengembalikan URL `/uploads/...` atau `null`. Folder diatur lewat `app.upload-dir`. |
+
+`AuthController.hash(text)` (static) meng-hash password dengan SHA-256; dipakai juga oleh `DataSeeder`.
 
 ## Alur halaman
 - **User**: Beranda → detail barang → (Temuan) Ajukan Klaim / (Hilang) Kirim Laporan.
