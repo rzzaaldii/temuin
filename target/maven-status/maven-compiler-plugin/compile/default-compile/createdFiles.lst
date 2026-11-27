@@ -5,6 +5,7 @@ com\example\temuin\controller\AuthController.class
 com\example\temuin\config\LoginInterceptor.class
 com\example\temuin\repository\UserRepository.class
 com\example\temuin\repository\KlaimRepository.class
+com\example\temuin\controller\InformasiController.class
 com\example\temuin\entity\Barang.class
 com\example\temuin\entity\Klaim.class
 com\example\temuin\repository\BarangRepository.class
